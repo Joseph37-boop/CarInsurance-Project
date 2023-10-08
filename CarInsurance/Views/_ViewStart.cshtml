@@ -1,0 +1,13 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+public ActionResult AdminView()
+{
+    using (InsuranceEntities db = new InsuranceEntities())
+    {
+        List<Insuree>
+    insurees = db.Insurees.ToList();
+    return View(insurees);
+    }
+    }
