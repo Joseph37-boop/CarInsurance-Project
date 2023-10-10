@@ -123,5 +123,82 @@ namespace CarInsurance.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult CalculateQuote(InsureeViewModel model)
+        {
+            decimal baseQuote = 50.0m;
+
+            // Age logic
+            if (model.Age <= 18)
+            {
+                baseQuote += 100.0m;
+            }
+            else if (model.Age >= 19 && model.Age <= 25)
+            {
+                baseQuote += 50.0m;
+            }
+            else
+            {
+                baseQuote += 25.0m;
+            }
+
+            // Car year logic
+            if (model.CarYear < 2000)
+            {
+                baseQuote += 25.0m;
+            }
+            else if (model.CarYear > 2015)
+            {
+                baseQuote += 25.0m;
+            }
+
+            // Car make and model logic
+            if (model.CarMake == "Porsche")
+            {
+                baseQuote += 25.0m;
+
+                if (model.CarModel == "911 Carrera")
+                {
+                    baseQuote += 25.0m;
+                }
+            }
+
+            // Speeding ticket and DUI logic
+            baseQuote += model.SpeedingTickets * 10.0m;
+
+            if (model.HasDUI)
+            {
+                baseQuote *= 1.25m; // Add 25% for DUI
+            }
+
+            // Full coverage logic
+            if (model.IsFullCoverage)
+            {
+                baseQuote *= 1.5m; // Add 50% for full coverage
+            }
+
+            
+
+            // Create a new Insuree instance and save it to the database
+            Insuree insuree = new Insuree
+            {
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Quote = baseQuote
+            };
+
+            using (InsuranceEntities db = new InsuranceEntities())
+            {
+                db.Insuree.Add(insuree);
+                db.SaveChanges();
+            }
+
+            // Redirect to a success page or display a confirmation message
+            return RedirectToAction("QuoteConfirmation");
+        }
     }
+
+   
+
 }
